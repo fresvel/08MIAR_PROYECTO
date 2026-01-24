@@ -1,0 +1,35 @@
+books/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Outputs / artifacts
+outputs/
+runs/
+checkpoints/
+logs/
+*.h5
+*.h5f
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
