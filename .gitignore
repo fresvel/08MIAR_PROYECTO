@@ -18,17 +18,19 @@ env/
 .ipynb_checkpoints/
 
 # Outputs / artifacts
-outputs/
-runs/
-checkpoints/
-logs/
-*.h5
-*.h5f
-*.ckpt
-*.pt
-*.pth
-*.onnx
-*.zip
+outputs/**/checkpoints/
+outputs/**/checkpoints/*.h5
+outputs/**/checkpoints/*.h5f
+outputs/**/checkpoints/*.ckpt
+outputs/**/checkpoints/*.pt
+outputs/**/checkpoints/*.pth
+outputs/**/checkpoints/*.onnx
+outputs/**/checkpoints/*.zip
+outputs/**/*.ckpt
+outputs/**/*.pt
+outputs/**/*.pth
+outputs/**/*.onnx
+outputs/**/*.zip
 
 # OS / editor
 .DS_Store

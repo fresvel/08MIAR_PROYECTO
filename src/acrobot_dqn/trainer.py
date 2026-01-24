@@ -1,45 +1,60 @@
-from pathlib import Path
 import gym
 from rl.callbacks import FileLogger, ModelIntervalCheckpoint
 
-from .model import build_model
-from .agent import build_agent
-from .utils import set_seeds, ensure_dir
+from .model import DQNModelBuilder
+from .agent import DQNAgentFactory
+from .utils import set_seeds, make_run_dir, save_config, copy_config_source
 
 
-def train(cfg):
-    env = gym.make(cfg['env_name'])
-    set_seeds(cfg['seed'], env)
+class DQNTrainer:
+    def __init__(self, cfg, config_path=None):
+        self.cfg = cfg
+        self.config_path = config_path
 
-    nb_actions = env.action_space.n
-    model = build_model(
-        env.observation_space.shape,
-        nb_actions,
-        hidden_units=cfg['model']['hidden_units'],
-        activation=cfg['model']['activation'],
-    )
-    agent = build_agent(model, nb_actions, cfg)
+    def train(self):
+        env = gym.make(self.cfg['env_name'])
+        set_seeds(self.cfg['seed'], env)
 
-    output_dir = Path(cfg['logging']['output_dir'])
-    checkpoints_dir = output_dir / 'checkpoints'
-    logs_dir = output_dir / 'logs'
-    ensure_dir(checkpoints_dir)
-    ensure_dir(logs_dir)
+        nb_actions = env.action_space.n
+        model = DQNModelBuilder(
+            hidden_units=self.cfg['model']['hidden_units'],
+            activation=self.cfg['model']['activation'],
+        ).build(env.observation_space.shape, nb_actions)
+        agent = DQNAgentFactory(self.cfg).build(model, nb_actions)
 
-    weights_path = checkpoints_dir / f"dqn_{cfg['env_name']}_weights.h5f"
-    log_path = logs_dir / f"dqn_{cfg['env_name']}_log.json"
+        output_dir = self.cfg['logging']['output_dir']
+        run_dir = make_run_dir(
+            output_dir,
+            run_name=self.cfg.get('run_name'),
+            run_id=self.cfg.get('run_id'),
+        )
+        save_config(self.cfg, run_dir / 'config.yaml')
+        copy_config_source(self.config_path, run_dir)
 
-    callbacks = [
-        ModelIntervalCheckpoint(str(weights_path), interval=cfg['logging']['checkpoint_interval']),
-        FileLogger(str(log_path), interval=cfg['logging']['log_interval']),
-    ]
+        weights_path = run_dir / 'checkpoints' / f"dqn_{self.cfg['env_name']}_weights.h5f"
+        log_path = run_dir / 'logs' / f"dqn_{self.cfg['env_name']}_log.json"
 
-    agent.fit(
-        env,
-        nb_steps=cfg['training']['nb_steps'],
-        visualize=False,
-        verbose=2,
-        callbacks=callbacks,
-    )
-    agent.save_weights(str(weights_path), overwrite=True)
-    return str(weights_path)
+        callbacks = [
+            ModelIntervalCheckpoint(str(weights_path), interval=self.cfg['logging']['checkpoint_interval']),
+            FileLogger(str(log_path), interval=self.cfg['logging']['log_interval']),
+        ]
+
+        agent.fit(
+            env,
+            nb_steps=self.cfg['training']['nb_steps'],
+            visualize=False,
+            verbose=2,
+            callbacks=callbacks,
+        )
+        agent.save_weights(str(weights_path), overwrite=True)
+
+        weights_export_dir = run_dir.parent.parent / 'weights'
+        weights_export_dir.mkdir(parents=True, exist_ok=True)
+        final_weights_path = weights_export_dir / f\"{run_dir.name}_weights.h5f\"
+        agent.save_weights(str(final_weights_path), overwrite=True)
+
+        return str(final_weights_path), str(run_dir)
+
+
+def train(cfg, config_path=None):
+    return DQNTrainer(cfg, config_path=config_path).train()

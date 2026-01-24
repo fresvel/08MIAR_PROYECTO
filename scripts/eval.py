@@ -14,10 +14,16 @@ def main():
     parser.add_argument('--config', required=True, help='Ruta al archivo de configuracion (yaml/json).')
     parser.add_argument('--weights', required=True, help='Ruta al archivo de pesos (.h5f).')
     parser.add_argument('--episodes', type=int, default=100, help='Numero de episodios de test.')
+    parser.add_argument('--save', default=None, help='Ruta para guardar métricas en JSON.')
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    results = evaluate(cfg, weights_path=args.weights, nb_episodes=args.episodes)
+    results = evaluate(
+        cfg,
+        weights_path=args.weights,
+        nb_episodes=args.episodes,
+        save_path=args.save,
+    )
     print(f"Exitos: {results['successes']}/{args.episodes} ({results['success_rate']:.1%})")
     print(f"Recompensa media: {results['mean_reward']:.2f}")
 
