@@ -46,17 +46,17 @@ Opción C (más capacidad):
 
 ## Nota técnica: Jupyter desde Docker (Python 3.8)
 
-Si no puedes instalar Python 3.8 en tu máquina, puedes ejecutar Jupyter dentro del contenedor y abrirlo en tu navegador:
+Si no se puede instalar Python 3.8 en su máquina, se puede se ejecutar Jupyter dentro del contenedor y abrirlo en su navegador:
 
 ```bash
 docker compose run --rm -p 8888:8888 rl \
   jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 ```
 
-Luego abre:
+Luego se abre:
 
 ```
 http://localhost:8888/?token=TU_TOKEN
 ```
 
-Así podrás ver `main.ipynb` y ejecutar `model.summary()` con el entorno correcto.
+Así podrás ver `main.ipynb` y se ejecutar `model.summary()` con el entorno correcto.

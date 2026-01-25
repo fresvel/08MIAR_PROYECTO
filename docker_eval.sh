@@ -2,7 +2,7 @@
 set -euo pipefail
 
 CONFIG="${1:-configs/dqn_base.yaml}"
-WEIGHTS="${2:-outputs/weights/dqn_base_01_weights.h5f}"
+WEIGHTS="${2:-outputs/weights/dqn_base_01_weights.h5}"
 EPISODES="${3:-100}"
 RUN_ID="${4:-}"
 

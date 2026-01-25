@@ -32,7 +32,7 @@ class DQNTrainer:
         save_config(self.cfg, run_dir / 'config.yaml')
         copy_config_source(self.config_path, run_dir)
 
-        weights_path = run_dir / 'checkpoints' / f"dqn_{self.cfg['env_name']}_weights.h5f"
+        weights_path = run_dir / 'checkpoints' / f"dqn_{self.cfg['env_name']}_weights.h5"
         log_path = run_dir / 'logs' / f"dqn_{self.cfg['env_name']}_log.json"
 
         callbacks = [
@@ -51,7 +51,7 @@ class DQNTrainer:
 
         weights_export_dir = run_dir.parent.parent / 'weights'
         weights_export_dir.mkdir(parents=True, exist_ok=True)
-        final_weights_path = weights_export_dir / f"{run_dir.name}_weights.h5f"
+        final_weights_path = weights_export_dir / f"{run_dir.name}_weights.h5"
         agent.save_weights(str(final_weights_path), overwrite=True)
 
         # Exportar el modelo completo en formato .keras (Keras 3)

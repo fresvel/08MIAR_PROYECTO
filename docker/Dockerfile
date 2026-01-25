@@ -5,7 +5,17 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONUNBUFFERED=1
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends \
+        git \
+        libgl1-mesa-glx \
+        libglu1-mesa \
+        libx11-6 \
+        libxext6 \
+        libxrender1 \
+        libsm6 \
+        xvfb \
+        xauth \
+        xfonts-base \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace

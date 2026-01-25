@@ -32,7 +32,7 @@ Mejorar la estabilidad del modelo base de Acrobot (reducir outliers en evaluaci√
    - Solo si el punto anterior no mejora:
      - `anneal_steps: 100000`
      - `eps_min: 0.01`
-   - Ejecutar otro run (e.g., `dqn_base_02`) y comparar.
+   - Se se ejecutar otro run (e.g., `dqn_base_02`) y comparar.
 
 4) **Documentaci√≥n**
    - Actualizar `main.ipynb` con:

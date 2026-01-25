@@ -26,9 +26,9 @@ docker run --rm -it \
   -w /workspace \
   miar-rl:py38 \
   python scripts/eval.py --config configs/dqn_base.yaml \
-    --weights outputs/weights/dqn_base_01_weights.h5f \
+    --weights outputs/weights/dqn_base_01_weights.h5 \
     --episodes 100 \
     --save outputs/runs/dqn_base_01/metrics/eval.json
 ```
 
-Nota (RHEL/SELinux): usa `:Z` en el volumen para evitar problemas de permisos.
+Nota (RHEL/SELinux): se usa `:Z` en el volumen para evitar problemas de permisos.
