@@ -52,6 +52,8 @@ def plot_training_logs(log_path, fig_dir):
     episodes = []
     rewards = []
     mean_qs = []
+    iterations = []
+    avg_returns = []
 
     for row in rows:
         if isinstance(row, dict):
@@ -64,6 +66,12 @@ def plot_training_logs(log_path, fig_dir):
             mean_q = row.get("mean_q")
             if mean_q is not None:
                 mean_qs.append(mean_q)
+            it = row.get("iteration")
+            if it is not None:
+                iterations.append(it)
+            avg_ret = row.get("average_return")
+            if avg_ret is not None:
+                avg_returns.append(avg_ret)
 
     if episodes and rewards and len(episodes) == len(rewards):
         plt.figure(figsize=(7, 4))
@@ -91,6 +99,20 @@ def plot_training_logs(log_path, fig_dir):
         plt.legend()
         plt.tight_layout()
         plt.savefig(fig_dir / "training_mean_q.png", dpi=150)
+        plt.close()
+
+    if iterations and avg_returns and len(iterations) == len(avg_returns):
+        plt.figure(figsize=(7, 4))
+        sns.lineplot(x=iterations, y=avg_returns, label="Average return")
+        smoothed = _moving_average(avg_returns, window=10)
+        if smoothed and len(smoothed) < len(iterations):
+            sns.lineplot(x=iterations[-len(smoothed):], y=smoothed, label="Media móvil (10)")
+        plt.xlabel("Iteración")
+        plt.ylabel("Average return")
+        plt.title("Average return por iteración")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(fig_dir / "training_average_return.png", dpi=150)
         plt.close()
 
 

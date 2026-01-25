@@ -1,0 +1,12 @@
+# Stack recomendado para TF-Agents
+tensorflow==2.8.0
+tf-agents==0.15.0
+gym==0.17.3
+numpy==1.23.5
+h5py==3.1.0
+pyglet==1.5.0
+PyYAML==6.0.1
+matplotlib==3.7.4
+seaborn==0.13.2
+pandas==2.0.3
+jupyter==1.0.0
