@@ -8,7 +8,7 @@ RUN_ID="${4:-}"
 
 SAVE_ARGS=()
 if [ -n "$RUN_ID" ]; then
-  SAVE_ARGS=(--save "outputs/runs/${RUN_ID}/metrics/eval.json")
+  SAVE_ARGS=(--save "outputs/runs/${RUN_ID}/metrics/eval.json" --fig-dir "outputs/runs/${RUN_ID}/figures")
 fi
 
 docker compose run --rm rl \

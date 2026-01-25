@@ -55,23 +55,31 @@ def plot_training_logs(log_path, fig_dir):
     iterations = []
     avg_returns = []
 
-    for row in rows:
-        if isinstance(row, dict):
-            ep = row.get("episode") or row.get("nb_episode")
-            if ep is not None:
-                episodes.append(ep)
-            reward = row.get("episode_reward") or row.get("reward")
-            if reward is not None:
-                rewards.append(reward)
-            mean_q = row.get("mean_q")
-            if mean_q is not None:
-                mean_qs.append(mean_q)
-            it = row.get("iteration")
-            if it is not None:
-                iterations.append(it)
-            avg_ret = row.get("average_return")
-            if avg_ret is not None:
-                avg_returns.append(avg_ret)
+    if isinstance(rows, dict):
+        # Keras-RL FileLogger writes a dict of arrays
+        episodes = rows.get("episode") or rows.get("nb_episode") or []
+        rewards = rows.get("episode_reward") or rows.get("reward") or []
+        mean_qs = rows.get("mean_q") or []
+        iterations = rows.get("iteration") or rows.get("nb_steps") or []
+        avg_returns = rows.get("average_return") or []
+    else:
+        for row in rows:
+            if isinstance(row, dict):
+                ep = row.get("episode") or row.get("nb_episode")
+                if ep is not None:
+                    episodes.append(ep)
+                reward = row.get("episode_reward") or row.get("reward")
+                if reward is not None:
+                    rewards.append(reward)
+                mean_q = row.get("mean_q")
+                if mean_q is not None:
+                    mean_qs.append(mean_q)
+                it = row.get("iteration")
+                if it is not None:
+                    iterations.append(it)
+                avg_ret = row.get("average_return")
+                if avg_ret is not None:
+                    avg_returns.append(avg_ret)
 
     if episodes and rewards and len(episodes) == len(rewards):
         plt.figure(figsize=(7, 4))

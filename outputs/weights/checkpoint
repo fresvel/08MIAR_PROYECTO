@@ -1,2 +1,2 @@
-model_checkpoint_path: "dqn_base_01_weights.h5f"
-all_model_checkpoint_paths: "dqn_base_01_weights.h5f"
+model_checkpoint_path: "dqn_base_00_weights.h5f"
+all_model_checkpoint_paths: "dqn_base_00_weights.h5f"
