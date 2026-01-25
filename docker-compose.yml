@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  rl:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: miar-rl:py38
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:Z
+    stdin_open: true
+    tty: true
+    command: bash

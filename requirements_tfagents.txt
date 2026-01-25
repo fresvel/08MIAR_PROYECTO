@@ -8,5 +8,5 @@ pyglet==1.5.0
 PyYAML==6.0.1
 matplotlib==3.7.4
 seaborn==0.13.2
-pandas==2.0.3
+pandas==1.5.3
 jupyter==1.0.0
