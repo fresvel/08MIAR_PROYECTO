@@ -51,11 +51,11 @@ class DQNTrainer:
 
         weights_export_dir = run_dir.parent.parent / 'weights'
         weights_export_dir.mkdir(parents=True, exist_ok=True)
-        final_weights_path = weights_export_dir / f\"{run_dir.name}_weights.h5f\"
+        final_weights_path = weights_export_dir / f"{run_dir.name}_weights.h5f"
         agent.save_weights(str(final_weights_path), overwrite=True)
 
         # Exportar el modelo completo en formato .keras (Keras 3)
-        final_model_path = weights_export_dir / f\"{run_dir.name}_model.keras\"
+        final_model_path = weights_export_dir / f"{run_dir.name}_model.keras"
         try:
             agent.model.save(str(final_model_path))
         except Exception:
