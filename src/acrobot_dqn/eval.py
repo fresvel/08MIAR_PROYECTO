@@ -1,17 +1,19 @@
 import json
+from pathlib import Path
 import gym
 import numpy as np
 
 from .model import DQNModelBuilder
 from .agent import DQNAgentFactory
 from .utils import set_seeds
+from .plots import plot_eval_results
 
 
 class DQNEvaluator:
     def __init__(self, cfg):
         self.cfg = cfg
 
-    def evaluate(self, weights_path=None, nb_episodes=100, save_path=None):
+    def evaluate(self, weights_path=None, nb_episodes=100, save_path=None, fig_dir=None):
         env = gym.make(self.cfg['env_name'])
         set_seeds(self.cfg['seed'], env)
 
@@ -60,14 +62,23 @@ class DQNEvaluator:
             'rewards': rewards,
         }
         if save_path:
+            save_path = Path(save_path)
+            save_path.parent.mkdir(parents=True, exist_ok=True)
             with open(save_path, 'w', encoding='utf-8') as f:
                 json.dump(results, f, indent=2)
+
+        if fig_dir:
+            plot_eval_results(results, fig_dir)
+        elif save_path:
+            run_dir = save_path.parent.parent if save_path.parent.name == 'metrics' else save_path.parent
+            plot_eval_results(results, run_dir / 'figures')
         return results
 
 
-def evaluate(cfg, weights_path=None, nb_episodes=100, save_path=None):
+def evaluate(cfg, weights_path=None, nb_episodes=100, save_path=None, fig_dir=None):
     return DQNEvaluator(cfg).evaluate(
         weights_path=weights_path,
         nb_episodes=nb_episodes,
         save_path=save_path,
+        fig_dir=fig_dir,
     )

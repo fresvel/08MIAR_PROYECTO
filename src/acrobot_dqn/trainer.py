@@ -4,6 +4,7 @@ from rl.callbacks import FileLogger, ModelIntervalCheckpoint
 from .model import DQNModelBuilder
 from .agent import DQNAgentFactory
 from .utils import set_seeds, make_run_dir, save_config, copy_config_source
+from .plots import plot_training_logs
 
 
 class DQNTrainer:
@@ -52,6 +53,15 @@ class DQNTrainer:
         weights_export_dir.mkdir(parents=True, exist_ok=True)
         final_weights_path = weights_export_dir / f\"{run_dir.name}_weights.h5f\"
         agent.save_weights(str(final_weights_path), overwrite=True)
+
+        # Exportar el modelo completo en formato .keras (Keras 3)
+        final_model_path = weights_export_dir / f\"{run_dir.name}_model.keras\"
+        try:
+            agent.model.save(str(final_model_path))
+        except Exception:
+            final_model_path = None
+
+        plot_training_logs(log_path, run_dir / 'figures')
 
         return str(final_weights_path), str(run_dir)
 
