@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 try:
     import yaml
@@ -20,6 +22,11 @@ def _deep_get(cfg: Dict, *keys, default=None):
             return default
         cur = cur[k]
     return cur
+
+
+def _set_plot_style():
+    sns.set_theme(style="whitegrid")
+    sns.set_palette("Set2")
 
 
 @dataclass
@@ -106,6 +113,57 @@ class ExperimentComparator:
                 if col in df.columns:
                     df[f"delta_{col}"] = df[col].diff()
         return df
+
+    def compare_eval_plots(
+        self,
+        run_id_a: str,
+        run_id_b: str,
+        out_dir: Optional[str | Path] = None,
+    ) -> Dict[str, Path]:
+        art_a = self.load_run(run_id_a)
+        art_b = self.load_run(run_id_b)
+
+        rewards_a = art_a.metrics.get("rewards") or []
+        rewards_b = art_b.metrics.get("rewards") or []
+        if not rewards_a or not rewards_b:
+            raise RuntimeError("No hay rewards de evaluacion para comparar.")
+
+        if out_dir is None:
+            out_dir = self.output_dir / "comparisons" / f"{run_id_a}_vs_{run_id_b}"
+        out_dir = Path(out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        _set_plot_style()
+
+        # Line plot: rewards per episode
+        plt.figure(figsize=(7, 4))
+        xs_a = list(range(1, len(rewards_a) + 1))
+        xs_b = list(range(1, len(rewards_b) + 1))
+        sns.lineplot(x=xs_a, y=rewards_a, label=run_id_a)
+        sns.lineplot(x=xs_b, y=rewards_b, label=run_id_b)
+        plt.xlabel("Episodio")
+        plt.ylabel("Recompensa")
+        plt.title("Comparacion de recompensas en evaluacion")
+        plt.legend()
+        plt.tight_layout()
+        line_path = out_dir / "eval_rewards_compare.png"
+        plt.savefig(line_path, dpi=150)
+        plt.close()
+
+        # Histogram overlay
+        plt.figure(figsize=(7, 4))
+        sns.histplot(rewards_a, bins=20, kde=True, label=run_id_a, alpha=0.5)
+        sns.histplot(rewards_b, bins=20, kde=True, label=run_id_b, alpha=0.5)
+        plt.xlabel("Recompensa")
+        plt.ylabel("Frecuencia")
+        plt.title("Distribucion de recompensas (comparacion)")
+        plt.legend()
+        plt.tight_layout()
+        hist_path = out_dir / "eval_rewards_hist_compare.png"
+        plt.savefig(hist_path, dpi=150)
+        plt.close()
+
+        return {"line": line_path, "hist": hist_path}
 
     def diff_params(
         self, run_id_a: str, run_id_b: str, keys: Optional[Iterable[str]] = None
