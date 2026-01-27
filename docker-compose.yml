@@ -29,6 +29,8 @@ services:
       - SDL_VIDEODRIVER=dummy
       - DISPLAY=:99
     command: >
-      bash -lc "Xvfb :99 -screen 0 1400x900x24 -ac >/tmp/xvfb.log 2>&1 &
+      bash -lc "if [ -f /tmp/.X99-lock ] && ! ps -ef | grep -q '[X]vfb :99'; then
+      rm -f /tmp/.X99-lock /tmp/.X11-unix/X99; fi;
+      Xvfb :99 -screen 0 1400x900x24 -ac >/tmp/xvfb.log 2>&1 &
       sleep 1 &&
       jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root"
