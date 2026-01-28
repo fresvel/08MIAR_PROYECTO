@@ -10,9 +10,9 @@ memory_limit: 100000
 
 policy:
   eps_max: 1.0
-  eps_min: 0.05
+  eps_min: 0.01
   eps_test: 0.02
-  anneal_steps: 50000
+  anneal_steps: 100000
 
 training:
   nb_steps: 200000
