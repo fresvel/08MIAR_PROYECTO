@@ -3,16 +3,28 @@ from rl.policy import LinearAnnealedPolicy, EpsGreedyQPolicy
 from rl.memory import SequentialMemory
 from tensorflow.keras.optimizers import Adam
 
+from .memory import PrioritizedReplayMemory
+
 
 class DQNAgentFactory:
     def __init__(self, cfg):
         self.cfg = cfg
 
     def build(self, model, nb_actions):
-        memory = SequentialMemory(
-            limit=self.cfg['memory_limit'],
-            window_length=self.cfg['window_length'],
-        )
+        memory_cfg = self.cfg.get('memory', {})
+        memory_type = memory_cfg.get('type', 'sequential')
+        if memory_type == 'prioritized':
+            memory = PrioritizedReplayMemory(
+                limit=self.cfg['memory_limit'],
+                window_length=self.cfg['window_length'],
+                alpha=memory_cfg.get('alpha', 0.6),
+                eps=memory_cfg.get('eps', 1e-6),
+            )
+        else:
+            memory = SequentialMemory(
+                limit=self.cfg['memory_limit'],
+                window_length=self.cfg['window_length'],
+            )
         policy = LinearAnnealedPolicy(
             EpsGreedyQPolicy(),
             attr='eps',
