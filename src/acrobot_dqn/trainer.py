@@ -67,4 +67,9 @@ class DQNTrainer:
 
 
 def train(cfg, config_path=None):
+    memory_type = cfg.get("memory", {}).get("type")
+    if memory_type == "prioritized_full":
+        from .per_trainer import PrioritizedDQNTrainer
+
+        return PrioritizedDQNTrainer(cfg, config_path=config_path).train()
     return DQNTrainer(cfg, config_path=config_path).train()

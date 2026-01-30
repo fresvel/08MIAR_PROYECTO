@@ -72,7 +72,7 @@ class PrioritizedReplayMemory:
             state.append(observations[cur_idx])
         return state
 
-    def sample(self, batch_size: int):
+    def sample(self, batch_size: int, return_indices: bool = False, beta: float = None):
         if self.nb_entries < 2:
             raise ValueError("Not enough entries to sample from.")
 
@@ -106,6 +106,14 @@ class PrioritizedReplayMemory:
                     terminal1=terminals[idx],
                 )
             )
+        if return_indices:
+            weights = None
+            if beta is not None:
+                # Importance-sampling weights to reduce bias.
+                sample_probs = probs[batch_idxs]
+                weights = (len(indices) * sample_probs) ** (-beta)
+                weights = weights / (weights.max() + self.eps)
+            return experiences, batch_idxs, weights
         return experiences
 
     def update_priorities(self, indices, priorities):

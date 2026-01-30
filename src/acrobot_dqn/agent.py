@@ -13,7 +13,7 @@ class DQNAgentFactory:
     def build(self, model, nb_actions):
         memory_cfg = self.cfg.get('memory', {})
         memory_type = memory_cfg.get('type', 'sequential')
-        if memory_type == 'prioritized':
+        if memory_type in ('prioritized', 'prioritized_full'):
             memory = PrioritizedReplayMemory(
                 limit=self.cfg['memory_limit'],
                 window_length=self.cfg['window_length'],
